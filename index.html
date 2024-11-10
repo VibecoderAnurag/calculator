@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator with Themes</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #F4E1D2; /* Warm beige background for vintage feel */
+            color: #5A4B3A; /* Muted brown text */
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        /* Glass effect on the calculator container */
+        .calculator {
+            background: rgba(255, 255, 255, 0.8); /* Light semi-transparent background */
+            backdrop-filter: blur(12px); /* Glass blur effect */
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            width: 340px;
+            text-align: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+            border: 1px solid #D8C4B6; /* Subtle border to mimic vintage look */
+        }
+
+        h1 {
+            font-family: 'Georgia', serif; /* Serif font for vintage feel */
+            color: #5A4B3A; /* Muted brown for header */
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label, #result {
+            display: block;
+            margin-top: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #5A4B3A; /* Muted brown color for labels */
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #D8C4B6; /* Subtle vintage border */
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #F1E6D8; /* Light vintage beige color */
+            color: #5A4B3A; /* Dark brown text */
+            transition: border 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border: 2px solid #A7A18D; /* Slightly darker brown border on focus */
+        }
+
+        .button-group {
+            margin-top: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            padding: 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #C4A68D; /* Vintage tan color */
+            color: #5A4B3A;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #B68A61; /* Slightly darker tan for hover effect */
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #error-message {
+            color: #F44336; /* Soft red for error messages */
+            font-weight: bold;
+        }
+
+        /* Theme toggle buttons */
+        .theme-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #C4A68D; /* Vintage tan button */
+            color: white;
+            border-radius: 50%;
+            padding: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: #B68A61; /* Darker tan on hover */
+        }
+
+        /* History and Undo/Redo */
+        #history {
+            margin-top: 1rem;
+            color: #5A4B3A;
+            font-size: 0.9rem;
+            overflow-y: auto;
+            height: 150px;
+            border-top: 2px solid #D8C4B6;
+            padding-top: 1rem;
+            text-align: left;
+        }
+
+        .history-item {
+            margin: 5px 0;
+            color: #7A6E56; /* Softer vintage color for history text */
+        }
+
+        /* Dark Theme */
+        .dark-theme {
+            background-color: #2F3E46; /* Deep Slate Blue */
+            color: #F0F4F8; /* Light grayish-white text */
+        }
+
+        .dark-theme .calculator {
+            background-color: #1F2A30; /* Dark slate gray */
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #354B56; /* Dark border for contrast */
+        }
+
+        .dark-theme button {
+            background-color: #3D5A5E; /* Tealish dark gray */
+            color: #F0F4F8; /* Light gray text */
+        }
+
+        .dark-theme button:hover {
+            background-color: #4A7177; /* Lighter teal for hover */
+        }
+
+        .dark-theme button:active {
+            background-color: #3A5354; /* Slightly darker teal for active state */
+        }
+
+        /* Light Theme */
+        .light-theme {
+            background-color: #F4E1D2; /* Warm beige background */
+            color: #5A4B3A; /* Muted brown text */
+        }
+
+        .light-theme .calculator {
+            background-color: rgba(255, 255, 255, 0.8); /* Light semi-transparent background */
+        }
+
+        .light-theme button {
+            background-color: #C4A68D; /* Vintage tan color */
+        }
+
+        .light-theme button:hover {
+            background-color: #B68A61; /* Slightly darker tan for hover effect */
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <div class="calculator">
+        <h1>Simple Calculator</h1>
+        
+        <div class="input-group">
+            <label for="num1">Number 1:</label>
+            <input type="text" id="num1" placeholder="Enter first number">
+        </div>
+        <div class="input-group">
+            <label for="num2">Number 2:</label>
+            <input type="text" id="num2" placeholder="Enter second number">
+        </div>
+        <div id="error-message"></div>
+        
+        <div class="button-group">
+            <button onclick="performOperation('add')">+</button>
+            <button onclick="performOperation('sub')">-</button>
+            <button onclick="performOperation('mul')">×</button>
+            <button onclick="performOperation('div')">÷</button>
+            <button onclick="performOperation('square')">x^n</button>
+            <button onclick="performOperation('mod')">mod</button>
+            <button onclick="performOperation('percent')">%</button>
+            <button onclick="performOperation('clear')">C</button>
+        </div>
+        
+        <div id="result">Result:</div>
+        
+        <div id="history">History:</div>
+    </div>
+
+    <button class="theme-toggle-btn" onclick="toggleTheme()">🌙</button>
+
+    <script>
+        const num1Input = document.getElementById("num1");
+        const num2Input = document.getElementById("num2");
+        const resultDisplay = document.getElementById("result");
+        const historyDisplay = document.getElementById("history");
+        const errorMessage = document.getElementById("error-message");
+
+        let history = [];
+        let currentHistoryIndex = -1;
+
+        // Perform the operation based on button clicked
+        function performOperation(operation) {
+            const num1 = parseFloat(num1Input.value);
+            const num2 = parseFloat(num2Input.value);
+            let result = 0;
+
+            if (isNaN(num1) || isNaN(num2)) {
+                errorMessage.textContent = "Please enter valid numbers.";
+                return;
+            }
+
+            switch (operation) {
+                case 'add':
+                    result = num1 + num2;
+                    break;
+                case 'sub':
+                    result = num1 - num2;
+                    break;
+                case 'mul':
+                    result = num1 * num2;
+                    break;
+                case 'div':
+                    if (num2 === 0) {
+                        errorMessage.textContent = "Cannot divide by zero.";
+                        return;
+                    }
+                    result = num1 / num2;
+                    break;
+                case 'square':
+                    result = Math.pow(num1, num2);
+                    break;
+                case 'mod':
+                    result = num1 % num2;
+                    break;
+                case 'percent':
+                    result = (num1 * num2) / 100;
+                    break;
+                case 'clear':
+                    num1Input.value = "";
+                    num2Input.value = "";
+                    resultDisplay.textContent = "Result:";
+                    errorMessage.textContent = "";
+                    return;
+                default:
+                    errorMessage.textContent = "Invalid operation!";
+                    return;
+            }
+
+            resultDisplay.textContent = `Result: ${result}`;
+            history.push(`${num1} ${operation} ${num2} = ${result}`);
+            updateHistory();
+            errorMessage.textContent = '';
+        }
+
+        // Toggle between light and dark themes
+        function toggleTheme() {
+            document.body.classList.toggle("dark-theme");
+            document.body.classList.toggle("light-theme");
+            const themeButton = document.querySelector(".theme-toggle-btn");
+            themeButton.textContent = document.body.classList.contains("dark-theme") ? "🌞" : "🌙";
+        }
+
+        // Update the history display
+        function updateHistory() {
+            historyDisplay.innerHTML = history.map(item => `<div class="history-item">${item}</div>`).join('');
+        }
+    </script>
+</body>
+</html>
