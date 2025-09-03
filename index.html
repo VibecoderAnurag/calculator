@@ -3,298 +3,1118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator with Themes</title>
+    <title>Professional Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* General styling */
-        body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        :root {
+            --primary-color: #6366f1;
+            --primary-hover: #5855eb;
+            --secondary-color: #f1f5f9;
+            --accent-color: #f59e0b;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #818cf8;
+            --primary-hover: #6366f1;
+            --secondary-color: #1e293b;
+            --accent-color: #fbbf24;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
             margin: 0;
-            background: #F4E1D2; /* Warm beige background for vintage feel */
-            color: #5A4B3A; /* Muted brown text */
-            transition: background-color 0.3s ease;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transition: var(--transition);
+            line-height: 1.5;
+        }
+
+        .calculator-container {
+            background: var(--background);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .calculator-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
             position: relative;
         }
 
-        /* Glass effect on the calculator container */
-        .calculator {
-            background: rgba(255, 255, 255, 0.8); /* Light semi-transparent background */
-            backdrop-filter: blur(12px); /* Glass blur effect */
-            border-radius: 12px;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-            padding: 2rem;
-            width: 340px;
-            text-align: center;
-            justify-content: center;
-            transition: background-color 0.3s ease;
-            border: 1px solid #D8C4B6; /* Subtle border to mimic vintage look */
+        .calculator-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
-        h1 {
-            font-family: 'Georgia', serif; /* Serif font for vintage feel */
-            color: #5A4B3A; /* Muted brown for header */
+        .calculator-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .display-section {
+            padding: 1.5rem;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .display {
+            background: var(--background);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .display-expression {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            min-height: 1.2rem;
+            word-break: break-all;
+        }
+
+        .display-result {
             font-size: 2rem;
-            margin-bottom: 1.5rem;
-            letter-spacing: 1px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: right;
+            word-break: break-all;
+            transition: var(--transition);
+        }
+
+        .display.error .display-result {
+            color: #ef4444;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .input-section {
+            padding: 1.5rem;
         }
 
         .input-group {
             margin-bottom: 1rem;
         }
 
-        label, #result {
+        .input-label {
             display: block;
-            margin-top: 1rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #5A4B3A; /* Muted brown color for labels */
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
         }
 
-        input[type="text"] {
+        .input-field {
             width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #D8C4B6; /* Subtle vintage border */
-            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
             font-size: 1rem;
-            background-color: #F1E6D8; /* Light vintage beige color */
-            color: #5A4B3A; /* Dark brown text */
-            transition: border 0.3s ease;
+            background: var(--background);
+            color: var(--text-primary);
+            transition: var(--transition);
+            font-family: 'Inter', monospace;
         }
 
-        input[type="text"]:focus {
-            border: 2px solid #A7A18D; /* Slightly darker brown border on focus */
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
-        .button-group {
-            margin-top: 1.5rem;
+        .input-field.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .button-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
-        button {
-            padding: 20px;
+        .btn {
+            padding: 1rem;
             border: none;
-            border-radius: 10px;
-            background-color: #C4A68D; /* Vintage tan color */
-            color: #5A4B3A;
-            font-size: 1.2rem;
+            border-radius: var(--radius-sm);
+            font-size: 1.125rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.2s ease;
+            transition: var(--transition);
             display: flex;
-            justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            justify-content: center;
+            min-height: 60px;
+            position: relative;
+            overflow: hidden;
         }
 
-        button:hover {
-            background-color: #B68A61; /* Slightly darker tan for hover effect */
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
         }
 
-        button:active {
-            transform: scale(0.98);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        .btn:hover::before {
+            left: 100%;
         }
 
-        #error-message {
-            color: #F44336; /* Soft red for error messages */
-            font-weight: bold;
-        }
-
-        /* Theme toggle buttons */
-        .theme-toggle-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background-color: #C4A68D; /* Vintage tan button */
+        .btn-primary {
+            background: var(--primary-color);
             color: white;
-            border-radius: 50%;
-            padding: 15px;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease;
         }
 
-        .theme-toggle-btn:hover {
-            background-color: #B68A61; /* Darker tan on hover */
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
 
-        /* History and Undo/Redo */
-        #history {
-            margin-top: 1rem;
-            color: #5A4B3A;
-            font-size: 0.9rem;
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-accent {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-wide {
+            grid-column: span 2;
+        }
+
+        .btn-tall {
+            grid-row: span 2;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid #ef4444;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .history-section {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 1.5rem;
+            max-height: 200px;
             overflow-y: auto;
-            height: 150px;
-            border-top: 2px solid #D8C4B6;
-            padding-top: 1rem;
-            text-align: left;
+        }
+
+        .history-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .history-list {
+            list-style: none;
         }
 
         .history-item {
-            margin: 5px 0;
-            color: #7A6E56; /* Softer vintage color for history text */
+            padding: 0.75rem;
+            background: var(--background);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Inter', monospace;
+            font-size: 0.875rem;
         }
 
-        /* Dark Theme */
-        .dark-theme {
-            background-color: #2F3E46; /* Deep Slate Blue */
-            color: #F0F4F8; /* Light grayish-white text */
+        .history-item:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateX(4px);
         }
 
-        .dark-theme .calculator {
-            background-color: #1F2A30; /* Dark slate gray */
-            border-radius: 12px;
-            padding: 2rem;
-            border: 1px solid #354B56; /* Dark border for contrast */
+        .history-item:last-child {
+            margin-bottom: 0;
         }
 
-        .dark-theme button {
-            background-color: #3D5A5E; /* Tealish dark gray */
-            color: #F0F4F8; /* Light gray text */
+        .clear-history {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            margin-left: auto;
         }
 
-        .dark-theme button:hover {
-            background-color: #4A7177; /* Lighter teal for hover */
+        .clear-history:hover {
+            background: var(--border);
+            color: var(--text-primary);
         }
 
-        .dark-theme button:active {
-            background-color: #3A5354; /* Slightly darker teal for active state */
+        .memory-section {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
 
-        /* Light Theme */
-        .light-theme {
-            background-color: #F4E1D2; /* Warm beige background */
-            color: #5A4B3A; /* Muted brown text */
+        .memory-btn {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+            min-height: auto;
         }
 
-        .light-theme .calculator {
-            background-color: rgba(255, 255, 255, 0.8); /* Light semi-transparent background */
+        .keyboard-hint {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: var(--surface);
+            border-radius: var(--radius-sm);
         }
 
-        .light-theme button {
-            background-color: #C4A68D; /* Vintage tan color */
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .calculator-container {
+                margin: 0.5rem;
+                max-width: none;
+            }
+            
+            .calculator-header {
+                padding: 1rem;
+            }
+            
+            .calculator-title {
+                font-size: 1.25rem;
+            }
+            
+            .display-section,
+            .input-section,
+            .history-section {
+                padding: 1rem;
+            }
+            
+            .btn {
+                padding: 0.875rem;
+                font-size: 1rem;
+                min-height: 50px;
+            }
+            
+            .display-result {
+                font-size: 1.5rem;
+            }
         }
 
-        .light-theme button:hover {
-            background-color: #B68A61; /* Slightly darker tan for hover effect */
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: var(--background);
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
         }
     </style>
 </head>
-<body class="light-theme">
-    <div class="calculator">
-        <h1>Simple Calculator</h1>
-        
-        <div class="input-group">
-            <label for="num1">Number 1:</label>
-            <input type="text" id="num1" placeholder="Enter first number">
+<body>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            <h1 class="calculator-title">
+                <i class="fas fa-calculator"></i>
+                Professional Calculator
+            </h1>
+            <p class="calculator-subtitle">Advanced mathematical operations</p>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
-        <div class="input-group">
-            <label for="num2">Number 2:</label>
-            <input type="text" id="num2" placeholder="Enter second number">
+
+        <div class="display-section">
+            <div class="display" id="display">
+                <div class="display-expression" id="expression"></div>
+                <div class="display-result" id="result">0</div>
+            </div>
         </div>
-        <div id="error-message"></div>
-        
-        <div class="button-group">
-            <button onclick="performOperation('add')">+</button>
-            <button onclick="performOperation('sub')">-</button>
-            <button onclick="performOperation('mul')">×</button>
-            <button onclick="performOperation('div')">÷</button>
-            <button onclick="performOperation('square')">x^n</button>
-            <button onclick="performOperation('mod')">mod</button>
-            <button onclick="performOperation('percent')">%</button>
-            <button onclick="performOperation('clear')">C</button>
+
+        <div class="input-section">
+            <div class="memory-section">
+                <button class="btn btn-secondary memory-btn tooltip" onclick="memoryOperation('clear')" data-tooltip="Memory Clear">
+                    <i class="fas fa-trash"></i> MC
+                </button>
+                <button class="btn btn-secondary memory-btn tooltip" onclick="memoryOperation('recall')" data-tooltip="Memory Recall">
+                    <i class="fas fa-undo"></i> MR
+                </button>
+                <button class="btn btn-secondary memory-btn tooltip" onclick="memoryOperation('add')" data-tooltip="Memory Add">
+                    <i class="fas fa-plus"></i> M+
+                </button>
+                <button class="btn btn-secondary memory-btn tooltip" onclick="memoryOperation('subtract')" data-tooltip="Memory Subtract">
+                    <i class="fas fa-minus"></i> M-
+                </button>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="num1">First Number</label>
+                <input type="text" id="num1" class="input-field" placeholder="Enter first number" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label class="input-label" for="num2">Second Number</label>
+                <input type="text" id="num2" class="input-field" placeholder="Enter second number" autocomplete="off">
+            </div>
+
+            <div class="error-message" id="error-message"></div>
+
+            <div class="button-grid">
+                <button class="btn btn-primary tooltip" onclick="performOperation('add')" data-tooltip="Addition">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="btn btn-primary tooltip" onclick="performOperation('subtract')" data-tooltip="Subtraction">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="btn btn-primary tooltip" onclick="performOperation('multiply')" data-tooltip="Multiplication">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button class="btn btn-primary tooltip" onclick="performOperation('divide')" data-tooltip="Division">
+                    <i class="fas fa-divide"></i>
+                </button>
+                
+                <button class="btn btn-accent tooltip" onclick="performOperation('power')" data-tooltip="Power">
+                    <i class="fas fa-superscript"></i>
+                </button>
+                <button class="btn btn-accent tooltip" onclick="performOperation('modulo')" data-tooltip="Modulo">
+                    <i class="fas fa-percentage"></i>
+                </button>
+                <button class="btn btn-accent tooltip" onclick="performOperation('sqrt')" data-tooltip="Square Root">
+                    <i class="fas fa-square-root-alt"></i>
+                </button>
+                <button class="btn btn-accent tooltip" onclick="performOperation('factorial')" data-tooltip="Factorial">
+                    <i class="fas fa-exclamation"></i>
+                </button>
+                
+                <button class="btn btn-secondary tooltip" onclick="performOperation('sin')" data-tooltip="Sine">
+                    sin
+                </button>
+                <button class="btn btn-secondary tooltip" onclick="performOperation('cos')" data-tooltip="Cosine">
+                    cos
+                </button>
+                <button class="btn btn-secondary tooltip" onclick="performOperation('tan')" data-tooltip="Tangent">
+                    tan
+                </button>
+                <button class="btn btn-secondary tooltip" onclick="performOperation('log')" data-tooltip="Logarithm">
+                    log
+                </button>
+                
+                <button class="btn btn-danger tooltip" onclick="clearAll()" data-tooltip="Clear All">
+                    <i class="fas fa-eraser"></i>
+                </button>
+                <button class="btn btn-secondary tooltip" onclick="performOperation('percentage')" data-tooltip="Percentage">
+                    %
+                </button>
+                <button class="btn btn-secondary tooltip" onclick="performOperation('reciprocal')" data-tooltip="Reciprocal">
+                    1/x
+                </button>
+                <button class="btn btn-secondary tooltip" onclick="performOperation('negate')" data-tooltip="Negate">
+                    ±
+                </button>
+            </div>
+
+            <div class="keyboard-hint">
+                <i class="fas fa-keyboard"></i> Use keyboard for faster input
+            </div>
         </div>
         
-        <div id="result">Result:</div>
-        
-        <div id="history">History:</div>
+        <div class="history-section">
+            <div class="history-title">
+                <i class="fas fa-history"></i>
+                History
+                <button class="clear-history" onclick="clearHistory()">Clear</button>
+            </div>
+            <ul class="history-list" id="history-list"></ul>
+        </div>
     </div>
 
-    <button class="theme-toggle-btn" onclick="toggleTheme()">🌙</button>
-
     <script>
-        const num1Input = document.getElementById("num1");
-        const num2Input = document.getElementById("num2");
-        const resultDisplay = document.getElementById("result");
-        const historyDisplay = document.getElementById("history");
-        const errorMessage = document.getElementById("error-message");
-
-        let history = [];
-        let currentHistoryIndex = -1;
-
-        // Perform the operation based on button clicked
-        function performOperation(operation) {
-            const num1 = parseFloat(num1Input.value);
-            const num2 = parseFloat(num2Input.value);
-            let result = 0;
-
-            if (isNaN(num1) || isNaN(num2)) {
-                errorMessage.textContent = "Please enter valid numbers.";
-                return;
+        class Calculator {
+            constructor() {
+                this.display = document.getElementById('display');
+                this.expression = document.getElementById('expression');
+                this.result = document.getElementById('result');
+                this.num1Input = document.getElementById('num1');
+                this.num2Input = document.getElementById('num2');
+                this.errorMessage = document.getElementById('error-message');
+                this.historyList = document.getElementById('history-list');
+                
+                this.memory = 0;
+                this.history = JSON.parse(localStorage.getItem('calculatorHistory')) || [];
+                this.currentExpression = '';
+                
+                this.initializeEventListeners();
+                this.updateHistoryDisplay();
+                this.loadTheme();
             }
 
-            switch (operation) {
+            initializeEventListeners() {
+                // Keyboard support
+                document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+                
+                // Input validation
+                [this.num1Input, this.num2Input].forEach(input => {
+                    input.addEventListener('input', (e) => this.validateInput(e.target));
+                    input.addEventListener('paste', (e) => this.handlePaste(e));
+                });
+            }
+
+            handleKeyboard(e) {
+                const key = e.key;
+                
+                // Prevent default for calculator keys
+                if ('0123456789+-*/.'.includes(key) || ['Enter', 'Escape', 'Backspace'].includes(key)) {
+                    e.preventDefault();
+                }
+
+                switch(key) {
+                    case 'Enter':
+                    case '=':
+                        this.performLastOperation();
+                        break;
+                    case 'Escape':
+                        this.clearAll();
+                        break;
+                    case 'Backspace':
+                        this.clearInputs();
+                        break;
+                    case '+':
+                        this.performOperation('add');
+                        break;
+                    case '-':
+                        this.performOperation('subtract');
+                        break;
+                    case '*':
+                        this.performOperation('multiply');
+                        break;
+                    case '/':
+                        this.performOperation('divide');
+                        break;
+                    case '%':
+                        this.performOperation('modulo');
+                        break;
+                    case '^':
+                        this.performOperation('power');
+                        break;
+                    default:
+                        if ('0123456789.'.includes(key)) {
+                            this.appendToInput(key);
+                        }
+                }
+            }
+
+            appendToInput(key) {
+                const activeInput = document.activeElement;
+                if (activeInput === this.num1Input || activeInput === this.num2Input) {
+                    activeInput.value += key;
+                    this.validateInput(activeInput);
+                }
+            }
+
+            handlePaste(e) {
+                setTimeout(() => {
+                    this.validateInput(e.target);
+                }, 0);
+            }
+
+            validateInput(input) {
+                const value = input.value;
+                const isValid = /^-?\d*\.?\d*$/.test(value) && value !== '';
+                
+                input.classList.toggle('error', !isValid && value !== '');
+                
+                if (!isValid && value !== '') {
+                    this.showError('Please enter a valid number');
+                } else {
+                    this.hideError();
+                }
+            }
+
+            getNumbers() {
+                const num1 = parseFloat(this.num1Input.value);
+                const num2 = parseFloat(this.num2Input.value);
+                
+                if (isNaN(num1) && isNaN(num2)) {
+                    this.showError('Please enter at least one valid number');
+                    return null;
+                }
+                
+                return { num1, num2 };
+            }
+
+            performOperation(operation) {
+                const numbers = this.getNumbers();
+                if (!numbers) return;
+
+                const { num1, num2 } = numbers;
+                let result;
+                let expression = '';
+
+                try {
+                    switch(operation) {
                 case 'add':
+                            if (isNaN(num1) || isNaN(num2)) {
+                                this.showError('Both numbers are required for addition');
+                                return;
+                            }
                     result = num1 + num2;
+                            expression = `${num1} + ${num2}`;
                     break;
-                case 'sub':
+                            
+                        case 'subtract':
+                            if (isNaN(num1) || isNaN(num2)) {
+                                this.showError('Both numbers are required for subtraction');
+                                return;
+                            }
                     result = num1 - num2;
+                            expression = `${num1} - ${num2}`;
                     break;
-                case 'mul':
+                            
+                        case 'multiply':
+                            if (isNaN(num1) || isNaN(num2)) {
+                                this.showError('Both numbers are required for multiplication');
+                                return;
+                            }
                     result = num1 * num2;
+                            expression = `${num1} × ${num2}`;
                     break;
-                case 'div':
+                            
+                        case 'divide':
+                            if (isNaN(num1) || isNaN(num2)) {
+                                this.showError('Both numbers are required for division');
+                                return;
+                            }
                     if (num2 === 0) {
-                        errorMessage.textContent = "Cannot divide by zero.";
+                                this.showError('Cannot divide by zero');
                         return;
                     }
                     result = num1 / num2;
+                            expression = `${num1} ÷ ${num2}`;
                     break;
-                case 'square':
+                            
+                        case 'power':
+                            if (isNaN(num1) || isNaN(num2)) {
+                                this.showError('Both numbers are required for power operation');
+                                return;
+                            }
                     result = Math.pow(num1, num2);
+                            expression = `${num1}^${num2}`;
                     break;
-                case 'mod':
+                            
+                        case 'modulo':
+                            if (isNaN(num1) || isNaN(num2)) {
+                                this.showError('Both numbers are required for modulo operation');
+                                return;
+                            }
+                            if (num2 === 0) {
+                                this.showError('Cannot perform modulo with zero');
+                                return;
+                            }
                     result = num1 % num2;
+                            expression = `${num1} mod ${num2}`;
+                            break;
+                            
+                        case 'sqrt':
+                            const num = !isNaN(num1) ? num1 : num2;
+                            if (isNaN(num)) {
+                                this.showError('Please enter a number for square root');
+                                return;
+                            }
+                            if (num < 0) {
+                                this.showError('Cannot calculate square root of negative number');
+                                return;
+                            }
+                            result = Math.sqrt(num);
+                            expression = `√${num}`;
+                            break;
+                            
+                        case 'factorial':
+                            const factNum = !isNaN(num1) ? num1 : num2;
+                            if (isNaN(factNum)) {
+                                this.showError('Please enter a number for factorial');
+                                return;
+                            }
+                            if (factNum < 0 || !Number.isInteger(factNum)) {
+                                this.showError('Factorial is only defined for non-negative integers');
+                                return;
+                            }
+                            if (factNum > 170) {
+                                this.showError('Number too large for factorial calculation');
+                                return;
+                            }
+                            result = this.calculateFactorial(factNum);
+                            expression = `${factNum}!`;
+                            break;
+                            
+                        case 'sin':
+                            const sinNum = !isNaN(num1) ? num1 : num2;
+                            if (isNaN(sinNum)) {
+                                this.showError('Please enter a number for sine');
+                                return;
+                            }
+                            result = Math.sin(sinNum * Math.PI / 180);
+                            expression = `sin(${sinNum}°)`;
+                            break;
+                            
+                        case 'cos':
+                            const cosNum = !isNaN(num1) ? num1 : num2;
+                            if (isNaN(cosNum)) {
+                                this.showError('Please enter a number for cosine');
+                                return;
+                            }
+                            result = Math.cos(cosNum * Math.PI / 180);
+                            expression = `cos(${cosNum}°)`;
+                            break;
+                            
+                        case 'tan':
+                            const tanNum = !isNaN(num1) ? num1 : num2;
+                            if (isNaN(tanNum)) {
+                                this.showError('Please enter a number for tangent');
+                                return;
+                            }
+                            result = Math.tan(tanNum * Math.PI / 180);
+                            expression = `tan(${tanNum}°)`;
+                            break;
+                            
+                        case 'log':
+                            const logNum = !isNaN(num1) ? num1 : num2;
+                            if (isNaN(logNum)) {
+                                this.showError('Please enter a number for logarithm');
+                                return;
+                            }
+                            if (logNum <= 0) {
+                                this.showError('Logarithm is only defined for positive numbers');
+                                return;
+                            }
+                            result = Math.log10(logNum);
+                            expression = `log(${logNum})`;
                     break;
-                case 'percent':
+                            
+                        case 'percentage':
+                            if (isNaN(num1) || isNaN(num2)) {
+                                this.showError('Both numbers are required for percentage calculation');
+                                return;
+                            }
                     result = (num1 * num2) / 100;
+                            expression = `${num1}% of ${num2}`;
+                            break;
+                            
+                        case 'reciprocal':
+                            const recNum = !isNaN(num1) ? num1 : num2;
+                            if (isNaN(recNum)) {
+                                this.showError('Please enter a number for reciprocal');
+                                return;
+                            }
+                            if (recNum === 0) {
+                                this.showError('Cannot calculate reciprocal of zero');
+                                return;
+                            }
+                            result = 1 / recNum;
+                            expression = `1/${recNum}`;
                     break;
-                case 'clear':
-                    num1Input.value = "";
-                    num2Input.value = "";
-                    resultDisplay.textContent = "Result:";
-                    errorMessage.textContent = "";
+                            
+                        case 'negate':
+                            const negNum = !isNaN(num1) ? num1 : num2;
+                            if (isNaN(negNum)) {
+                                this.showError('Please enter a number to negate');
                     return;
+                            }
+                            result = -negNum;
+                            expression = `-${negNum}`;
+                            break;
+                            
                 default:
-                    errorMessage.textContent = "Invalid operation!";
-                    return;
+                            this.showError('Invalid operation');
+                            return;
+                    }
+
+                    this.displayResult(result, expression);
+                    this.addToHistory(expression, result);
+                    this.hideError();
+                    
+                } catch (error) {
+                    this.showError('Calculation error: ' + error.message);
+                }
             }
 
-            resultDisplay.textContent = `Result: ${result}`;
-            history.push(`${num1} ${operation} ${num2} = ${result}`);
-            updateHistory();
-            errorMessage.textContent = '';
+            calculateFactorial(n) {
+                if (n === 0 || n === 1) return 1;
+                let result = 1;
+                for (let i = 2; i <= n; i++) {
+                    result *= i;
+                }
+                return result;
+            }
+
+            displayResult(result, expression) {
+                this.expression.textContent = expression;
+                this.result.textContent = this.formatNumber(result);
+                this.currentExpression = expression;
+                
+                // Add visual feedback
+                this.display.classList.remove('error');
+                this.display.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    this.display.style.transform = 'scale(1)';
+                }, 150);
+            }
+
+            formatNumber(num) {
+                if (Number.isInteger(num)) {
+                    return num.toString();
+                }
+                
+                // Handle very large or very small numbers
+                if (Math.abs(num) >= 1e15 || (Math.abs(num) < 1e-6 && num !== 0)) {
+                    return num.toExponential(6);
+                }
+                
+                // Round to 10 decimal places and remove trailing zeros
+                return parseFloat(num.toFixed(10)).toString();
+            }
+
+            addToHistory(expression, result) {
+                const historyItem = {
+                    id: Date.now(),
+                    expression,
+                    result: this.formatNumber(result),
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                
+                this.history.unshift(historyItem);
+                
+                // Limit history to 50 items
+                if (this.history.length > 50) {
+                    this.history = this.history.slice(0, 50);
+                }
+                
+                this.saveHistory();
+                this.updateHistoryDisplay();
+            }
+
+            updateHistoryDisplay() {
+                this.historyList.innerHTML = '';
+                
+                if (this.history.length === 0) {
+                    this.historyList.innerHTML = '<li class="history-item" style="text-align: center; color: var(--text-secondary);">No calculations yet</li>';
+                    return;
+                }
+                
+                this.history.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'history-item';
+                    li.innerHTML = `
+                        <div style="font-weight: 500;">${item.expression} = ${item.result}</div>
+                        <div style="font-size: 0.75rem; opacity: 0.7; margin-top: 0.25rem;">${item.timestamp}</div>
+                    `;
+                    li.onclick = () => this.useHistoryItem(item);
+                    this.historyList.appendChild(li);
+                });
+            }
+
+            useHistoryItem(item) {
+                this.num1Input.value = item.result;
+                this.num2Input.value = '';
+                this.num1Input.focus();
+            }
+
+            clearHistory() {
+                this.history = [];
+                this.saveHistory();
+                this.updateHistoryDisplay();
+            }
+
+            saveHistory() {
+                localStorage.setItem('calculatorHistory', JSON.stringify(this.history));
+            }
+
+            memoryOperation(operation) {
+                const numbers = this.getNumbers();
+                if (!numbers) return;
+
+                const { num1, num2 } = numbers;
+                const currentValue = !isNaN(num1) ? num1 : num2;
+
+                switch(operation) {
+                    case 'clear':
+                        this.memory = 0;
+                        this.showTemporaryMessage('Memory cleared');
+                        break;
+                    case 'recall':
+                        this.num1Input.value = this.memory;
+                        this.num1Input.focus();
+                        break;
+                    case 'add':
+                        this.memory += currentValue;
+                        this.showTemporaryMessage('Added to memory');
+                        break;
+                    case 'subtract':
+                        this.memory -= currentValue;
+                        this.showTemporaryMessage('Subtracted from memory');
+                        break;
+                }
+            }
+
+            showTemporaryMessage(message) {
+                const originalText = this.result.textContent;
+                this.result.textContent = message;
+                setTimeout(() => {
+                    this.result.textContent = originalText;
+                }, 1500);
+            }
+
+            clearAll() {
+                this.num1Input.value = '';
+                this.num2Input.value = '';
+                this.expression.textContent = '';
+                this.result.textContent = '0';
+                this.hideError();
+                this.display.classList.remove('error');
+                this.num1Input.focus();
+            }
+
+            clearInputs() {
+                this.num1Input.value = '';
+                this.num2Input.value = '';
+                this.hideError();
+            }
+
+            showError(message) {
+                this.errorMessage.textContent = message;
+                this.errorMessage.classList.add('show');
+                this.display.classList.add('error');
+            }
+
+            hideError() {
+                this.errorMessage.classList.remove('show');
+                this.display.classList.remove('error');
+            }
+
+            performLastOperation() {
+                if (this.currentExpression) {
+                    // Try to repeat the last operation
+                    const lastHistory = this.history[0];
+                    if (lastHistory) {
+                        this.num1Input.value = lastHistory.result;
+                        this.num2Input.value = '';
+                    }
+                }
+            }
+
+            loadTheme() {
+                const savedTheme = localStorage.getItem('calculatorTheme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                this.updateThemeButton(savedTheme);
+            }
+
+            toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('calculatorTheme', newTheme);
+                this.updateThemeButton(newTheme);
+            }
+
+            updateThemeButton(theme) {
+                const themeButton = document.querySelector('.theme-toggle i');
+                themeButton.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
         }
 
-        // Toggle between light and dark themes
+        // Global functions for backward compatibility
+        let calculator;
+
+        function performOperation(operation) {
+            calculator.performOperation(operation);
+        }
+
+        function clearAll() {
+            calculator.clearAll();
+        }
+
+        function clearHistory() {
+            calculator.clearHistory();
+        }
+
+        function memoryOperation(operation) {
+            calculator.memoryOperation(operation);
+        }
+
         function toggleTheme() {
-            document.body.classList.toggle("dark-theme");
-            document.body.classList.toggle("light-theme");
-            const themeButton = document.querySelector(".theme-toggle-btn");
-            themeButton.textContent = document.body.classList.contains("dark-theme") ? "🌞" : "🌙";
+            calculator.toggleTheme();
         }
 
-        // Update the history display
-        function updateHistory() {
-            historyDisplay.innerHTML = history.map(item => `<div class="history-item">${item}</div>`).join('');
-        }
+        // Initialize calculator when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            calculator = new Calculator();
+        });
     </script>
 </body>
 </html>
