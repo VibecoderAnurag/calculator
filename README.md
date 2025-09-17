@@ -10,7 +10,7 @@ How to Use Input numbers: Enter numbers in the provided fields for Number 1 and 
 
 Clone the repository:
 
-bash Copy code git clone https://github.com/killerking301/calculator.git Navigate to the project directory:
+bash Copy code git clone https://github.com/VibecoderAnurag/calculator.git Navigate to the project directory:
 
 bash Copy code cd calculator Open cal.html in your preferred browser:
 
